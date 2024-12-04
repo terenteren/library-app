@@ -1,0 +1,65 @@
+Amazon linux ec2 셋팅
+
+
+# mysql
+
+1. 기존 캐시와 설치 파일 정리
+먼저 캐시된 패키지를 삭제하여 깨끗한 상태에서 다시 설치를 시도합니다:
+
+sudo dnf clean all
+sudo rm -rf /var/cache/dnf
+
+
+2. GPG 키를 수동으로 가져오기
+MySQL 리포지토리의 GPG 키를 다시 가져옵니다:
+
+sudo rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
+키가 올바르게 가져왔는지 확인하려면 다음 명령을 실행합니다:
+
+rpm -qa gpg-pubkey | grep mysql
+MySQL 관련 키가 리스트에 나타나야 합니다.
+
+
+3. MySQL 설치 재시도
+GPG 키를 다시 가져온 후 MySQL 서버 설치를 다시 시도합니다:
+
+sudo dnf install -y mysql-community-server
+
+
+4. GPG 확인 비활성화 (임시 해결책)
+만약 위 방법으로도 해결되지 않는다면, GPG 확인을 비활성화하고 설치를 진행할 수 있습니다.
+이는 보안적으로 완벽하지 않지만 테스트 환경에서는 유효합니다:
+
+sudo dnf install -y mysql-community-server --nogpgcheck
+
+
+6. 설치 확인
+MySQL 설치가 완료되었는지 확인합니다:
+
+sudo systemctl start mysqld
+sudo systemctl status mysqld
+
+mysql --version
+
+MySQL 임시 비밀번호 확인
+MySQL 로그 파일에서 임시 비밀번호를 검색합니다:
+
+sudo grep 'temporary password' /var/log/mysqld.log
+비밀번호 확인 후
+Mysql -u root -p
+로그인 이후 비번 번경
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'root1234';
+
+————————————————————————————————————————————————————————————
+
+# 깃과 자바 설치
+
+sudo yum install git -y
+
+sudo yum install java-11-amazon-corretto -y
+
+java -version
+
+
+
+
